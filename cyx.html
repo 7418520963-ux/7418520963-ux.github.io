@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>瑞幸咖啡 - 专业咖啡新鲜式</title>
+    <!-- 引入外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF6B00', // 瑞幸主色调橙色
+                        secondary: '#00B42A', // 辅助色绿色
+                        dark: '#333333',
+                        light: '#F5F5F5',
+                        'gray-medium': '#999999',
+                        'gray-light': '#E5E5E5'
+                    },
+                    fontFamily: {
+                        sans: ['PingFang SC', 'Helvetica Neue', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-transform {
+                transition-property: transform;
+                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                transition-duration: 300ms;
+            }
+        }
+    </style>
+    
+    <style>
+        /* 基础动画和过渡效果 */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* 轮播图指示器样式 */
+        .carousel-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .carousel-indicator.active {
+            width: 30px;
+            border-radius: 5px;
+            background-color: white;
+        }
+        
+        /* 导航栏滚动效果 */
+        .nav-scrolled {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* 产品卡片悬停效果 */
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-white text-dark font-sans">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-transparent">
+        <div class="container mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
+            <!-- 品牌Logo -->
+            <a href="#" class="flex items-center">
+                <img src="https://picsum.photos/id/431/60/60" alt="瑞幸咖啡Logo" class="h-10 md:h-12">
+                <span class="ml-2 text-xl md:text-2xl font-bold text-primary">瑞幸咖啡</span>
+            </a>
+            
+            <!-- 桌面端导航菜单 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#products" class="text-dark hover:text-primary transition-colors font-medium">菜单</a>
+                <a href="#promotions" class="text-dark hover:text-primary transition-colors font-medium">优惠活动</a>
+                <a href="#brand" class="text-dark hover:text-primary transition-colors font-medium">品牌故事</a>
+                <a href="#stores" class="text-dark hover:text-primary transition-colors font-medium">门店查询</a>
+                <a href="#app" class="text-dark hover:text-primary transition-colors font-medium">下载APP</a>
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="menuBtn" class="md:hidden text-dark text-2xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="md:hidden bg-white shadow-lg absolute w-full left-0 top-full transform -translate-y-full opacity-0 transition-all duration-300 pointer-events-none">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="#products" class="text-dark hover:text-primary transition-colors py-2 border-b border-gray-light">菜单</a>
+                <a href="#promotions" class="text-dark hover:text-primary transition-colors py-2 border-b border-gray-light">优惠活动</a>
+                <a href="#brand" class="text-dark hover:text-primary transition-colors py-2 border-b border-gray-light">品牌故事</a>
+                <a href="#stores" class="text-dark hover:text-primary transition-colors py-2 border-b border-gray-light">门店查询</a>
+                <a href="#app" class="text-dark hover:text-primary transition-colors py-2">下载APP</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 轮播图区域 -->
+        <section id="carousel" class="relative h-[50vh] md:h-[70vh] overflow-hidden">
+            <div class="carousel-container h-full">
+                <!-- 轮播图片1 -->
+                <div class="carousel-slide absolute inset-0 opacity-100 transition-opacity duration-1000">
+                    <img src="https://picsum.photos/id/431/1920/1080" alt="瑞幸咖啡新品推广" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
+                        <div class="container mx-auto px-6 md:px-12">
+                            <h2 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white mb-4 text-shadow">
+                                夏日新品<br>冰爽上市
+                            </h2>
+                            <p class="text-[clamp(1rem,2vw,1.25rem)] text-white/90 mb-8 max-w-lg">
+                                精选当季鲜果，搭配优质咖啡豆，带来全新味蕾体验
+                            </p>
+                            <a href="#products" class="inline-block bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                                立即选购
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 轮播图片2 -->
+                <div class="carousel-slide absolute inset-0 opacity-0 transition-opacity duration-1000">
+                    <img src="https://picsum.photos/id/766/1920/1080" alt="瑞幸咖啡优惠活动" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
+                        <div class="container mx-auto px-6 md:px-12">
+                            <h2 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white mb-4 text-shadow">
+                                新用户专享<br>首单立减20元
+                            </h2>
+                            <p class="text-[clamp(1rem,2vw,1.25rem)] text-white/90 mb-8 max-w-lg">
+                                下载APP注册即享新人福利，更多优惠等你来
+                            </p>
+                            <a href="#app" class="inline-block bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                                下载APP
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 轮播图片3 -->
+                <div class="carousel-slide absolute inset-0 opacity-0 transition-opacity duration-1000">
+                    <img src="https://picsum.photos/id/425/1920/1080" alt="瑞幸咖啡门店" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-r from-black/50 to-transparent flex items-center">
+                        <div class="container mx-auto px-6 md:px-12">
+                            <h2 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white mb-4 text-shadow">
+                                全国超万家门店<br>就在你身边
+                            </h2>
+                            <p class="text-[clamp(1rem,2vw,1.25rem)] text-white/90 mb-8 max-w-lg">
+                                随时随地，享受一杯高品质咖啡
+                            </p>
+                            <a href="#stores" class="inline-block bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                                查找门店
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 轮播控制按钮 -->
+            <button class="carousel-control absolute top-1/2 left-4 -translate-y-1/2 w-10 h-10 bg-white/30 hover:bg-white/50 rounded-full flex items-center justify-center text-white transition-all">
+                <i class="fa fa-angle-left text-2xl"></i>
+            </button>
+            <button class="carousel-control absolute top-1/2 right-4 -translate-y-1/2 w-10 h-10 bg-white/30 hover:bg-white/50 rounded-full flex items-center justify-center text-white transition-all">
+                <i class="fa fa-angle-right text-2xl"></i>
+            </button>
+            
+            <!-- 轮播指示器 -->
+            <div class="absolute bottom-6 left-0 right-0 flex justify-center space-x-2">
+                <div class="carousel-indicator active" data-index="0"></div>
+                <div class="carousel-indicator" data-index="1"></div>
+                <div class="carousel-indicator" data-index="2"></div>
+            </div>
+        </section>
+        
+        <!-- 产品分类导航 -->
+        <section class="py-8 bg-light">
+            <div class="container mx-auto px-4">
+                <div class="flex overflow-x-auto pb-4 hide-scrollbar space-x-4 md:justify-center">
+                    <button class="whitespace-nowrap px-6 py-2 bg-primary text-white rounded-full font-medium">
+                        全部饮品
+                    </button>
+                    <button class="whitespace-nowrap px-6 py-2 bg-white text-dark hover:bg-primary/10 rounded-full font-medium transition-colors">
+                        咖啡系列
+                    </button>
+                    <button class="whitespace-nowrap px-6 py-2 bg-white text-dark hover:bg-primary/10 rounded-full font-medium transition-colors">
+                        茶咖系列
+                    </button>
+                    <button class="whitespace-nowrap px-6 py-2 bg-white text-dark hover:bg-primary/10 rounded-full font-medium transition-colors">
+                        果汁系列
+                    </button>
+                    <button class="whitespace-nowrap px-6 py-2 bg-white text-dark hover:bg-primary/10 rounded-full font-medium transition-colors">
+                        轻食系列
+                    </button>
+                    <button class="whitespace-nowrap px-6 py-2 bg-white text-dark hover:bg-primary/10 rounded-full font-medium transition-colors">
+                        烘焙系列
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 产品展示区 -->
+        <section id="products" class="py-16">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">人气推荐</h2>
+                    <p class="text-gray-medium max-w-2xl mx-auto">精选当季最受欢迎产品，每一款都值得品尝</p>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <!-- 产品1 -->
+                    <div class="product-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/431/300/300" alt="生椰拿铁" class="w-full h-48 object-cover">
+                            <span class="absolute top-3 left-3 bg-primary text-white text-sm font-medium px-2 py-1 rounded">热销</span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">生椰拿铁</h3>
+                            <p class="text-gray-medium text-sm mb-3">椰香浓郁，口感丝滑</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">¥24</span>
+                                <button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 产品2 -->
+                    <div class="product-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/766/300/300" alt="厚乳拿铁" class="w-full h-48 object-cover">
+                            <span class="absolute top-3 left-3 bg-secondary text-white text-sm font-medium px-2 py-1 rounded">新品</span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">厚乳拿铁</h3>
+                            <p class="text-gray-medium text-sm mb-3">醇厚口感，奶香十足</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">¥28</span>
+                                <button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 产品3 -->
+                    <div class="product-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/425/300/300" alt="美式咖啡" class="w-full h-48 object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">美式咖啡</h3>
+                            <p class="text-gray-medium text-sm mb-3">经典美式，提神醒脑</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">¥18</span>
+                                <button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 产品4 -->
+                    <div class="product-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/493/300/300" alt="杨枝甘露" class="w-full h-48 object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">杨枝甘露</h3>
+                            <p class="text-gray-medium text-sm mb-3">新鲜水果，清爽可口</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">¥26</span>
+                                <button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 产品5 -->
+                    <div class="product-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/225/300/300" alt="焦糖玛奇朵" class="w-full h-48 object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">焦糖玛奇朵</h3>
+                            <p class="text-gray-medium text-sm mb-3">甜蜜焦糖，层次丰富</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">¥29</span>
+                                <button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 产品6 -->
+                    <div class="product-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/292/300/300" alt="抹茶瑞纳冰" class="w-full h-48 object-cover">
+                            <span class="absolute top-3 left-3 bg-primary text-white text-sm font-medium px-2 py-1 rounded">热销</span>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">抹茶瑞纳冰</h3>
+                            <p class="text-gray-medium text-sm mb-3">清新抹茶，冰爽宜人</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">¥32</span>
+                                <button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 产品7 -->
+                    <div class="product-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/433/300/300" alt="芝士培根蛋堡" class="w-full h-48 object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">芝士培根蛋堡</h3>
+                            <p class="text-gray-medium text-sm mb-3">营养早餐，能量满满</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">¥19</span>
+                                <button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 产品8 -->
+                    <div class="product-card bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/312/300/300" alt="蓝莓麦芬" class="w-full h-48 object-cover">
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg mb-1">蓝莓麦芬</h3>
+                            <p class="text-gray-medium text-sm mb-3">松软可口，果香浓郁</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-primary font-bold">¥15</span>
+                                <button class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-10">
+                    <a href="#" class="inline-block border-2 border-primary text-primary hover:bg-primary hover:text-white font-medium py-2 px-8 rounded-full transition-colors">
+                        查看全部产品
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 优惠活动区 -->
+        <section id="promotions" class="py-16 bg-light">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">优惠活动</h2>
+                    <p class="text-gray-medium max-w-2xl mx-auto">限时优惠，不容错过</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 活动1 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://picsum.photos/id/292/600/400" alt="周一特惠" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute top-4 left-4 bg-primary text-white text-sm font-bold px-3 py-1 rounded-full">
+                                周一特惠
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="font-bold text-xl mb-2">全场饮品买一送一</h3>
+                            <p class="text-gray-medium mb-4">每周一使用瑞幸APP下单，即可享受买一送一优惠</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-medium">有效期至：2023-12-31</span>
+                                <a href="#" class="text-primary font-medium hover:underline">立即参与</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 活动2 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://picsum.photos/id/312/600/400" alt="新用户福利" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute top-4 left-4 bg-secondary text-white text-sm font-bold px-3 py-1 rounded-full">
+                                新用户专享
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="font-bold text-xl mb-2">新人立减20元</h3>
+                            <p class="text-gray-medium mb-4">新用户注册即可获得20元优惠券，无门槛使用</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-medium">长期有效</span>
+                                <a href="#" class="text-primary font-medium hover:underline">立即领取</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 活动3 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="https://picsum.photos/id/433/600/400" alt="积分兑换" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute top-4 left-4 bg-dark text-white text-sm font-bold px-3 py-1 rounded-full">
+                                会员福利
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="font-bold text-xl mb-2">积分兑换好礼</h3>
+                            <p class="text-gray-medium mb-4">消费累积积分，可兑换免费饮品或周边产品</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-medium">长期有效</span>
+                                <a href="#" class="text-primary font-medium hover:underline">查看详情</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 品牌故事 -->
+        <section id="brand" class="py-16">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col lg:flex-row items-center gap-10">
+                    <div class="lg:w-1/2">
+                        <img src="https://picsum.photos/id/425/800/600" alt="瑞幸咖啡品牌故事" class="w-full h-auto rounded-xl shadow-lg">
+                    </div>
+                    <div class="lg:w-1/2">
+                        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6">关于瑞幸</h2>
+                        <p class="text-gray-medium mb-4 leading-relaxed">
+                            瑞幸咖啡（Luckin Coffee）是中国新兴的咖啡品牌，致力于为中国消费者提供高品质、高性价比的咖啡产品和便捷的消费体验。
+                        </p>
+                        <p class="text-gray-medium mb-4 leading-relaxed">
+                            自成立以来，瑞幸咖啡以其创新的商业模式和技术应用，迅速在中国咖啡市场占据重要地位。我们坚持精选全球优质咖啡豆，由WBC（世界咖啡师大赛）冠军团队精心烘焙，确保每一杯咖啡的品质。
+                        </p>
+                        <p class="text-gray-medium mb-6 leading-relaxed">
+                            截至目前，瑞幸咖啡已在全国超过400个城市开设了超万家门店，通过线上线下融合的方式，让更多人随时随地享受一杯好咖啡。
+                        </p>
+                        <a href="#" class="inline-block bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                            了解更多
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 门店查询 -->
+        <section id="stores" class="py-16 bg-light">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">查找门店</h2>
+                    <p class="text-gray-medium max-w-2xl mx-auto">全国超万家门店，总有一家在你身边</p>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <input type="text" placeholder="请输入城市或地址" class="w-full px-4 py-3 border border-gray-light rounded-lg focus:outline-none focus:border-primary">
+                        </div>
+                        <button class="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-lg transition-colors">
+                            <i class="fa fa-search mr-2"></i>搜索
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 门店1 -->
+                    <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all duration-300">
+                        <h3 class="font-bold text-lg mb-2">瑞幸咖啡（北京三里屯店）</h3>
+                        <p class="text-gray-medium mb-4">北京市朝阳区三里屯路19号</p>
+                        <div class="flex items-center text-sm text-gray-medium mb-4">
+                            <span class="mr-4"><i class="fa fa-clock-o mr-1"></i> 08:00-22:00</span>
+                            <span><i class="fa fa-phone mr-1"></i> 010-12345678</span>
+                        </div>
+                        <a href="#" class="text-primary font-medium hover:underline inline-flex items-center">
+                            查看详情 <i class="fa fa-angle-right ml-1"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- 门店2 -->
+                    <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all duration-300">
+                        <h3 class="font-bold text-lg mb-2">瑞幸咖啡（上海陆家嘴店）</h3>
+                        <p class="text-gray-medium mb-4">上海市浦东新区陆家嘴环路1000号</p>
+                        <div class="flex items-center text-sm text-gray-medium mb-4">
+                            <span class="mr-4"><i class="fa fa-clock-o mr-1"></i> 07:30-22:30</span>
+                            <span><i class="fa fa-phone mr-1"></i> 021-87654321</span>
+                        </div>
+                        <a href="#" class="text-primary font-medium hover:underline inline-flex items-center">
+                            查看详情 <i class="fa fa-angle-right ml-1"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- 门店3 -->
+                    <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-xl transition-all duration-300">
+                        <h3 class="font-bold text-lg mb-2">瑞幸咖啡（广州天河店）</h3>
+                        <p class="text-gray-medium mb-4">广州市天河区天河路385号</p>
+                        <div class="flex items-center text-sm text-gray-medium mb-4">
+                            <span class="mr-4"><i class="fa fa-clock-o mr-1"></i> 08:00-23:00</span>
+                            <span><i class="fa fa-phone mr-1"></i> 020-56781234</span>
+                        </div>
+                        <a href="#" class="text-primary font-medium hover:underline inline-flex items-center">
+                            查看详情 <i class="fa fa-angle-right ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-10">
+                    <a href="#" class="inline-block border-2 border-primary text-primary hover:bg-primary hover:text-white font-medium py-2 px-8 rounded-full transition-colors">
+                        查看更多门店
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 下载APP -->
+        <section id="app" class="py-16 bg-primary/5">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-10">
+                    <div class="lg:w-1/2">
+                        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">下载瑞幸APP</h2>
+                        <p class="text-gray-medium mb-6 max-w-lg">
+                            随时随地，一键下单。新用户注册即享多重福利，更多优惠活动等你来发现。
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="#" class="flex items-center bg-dark hover:bg-dark/80 text-white px-6 py-3 rounded-lg transition-colors">
+                                <i class="fa fa-apple text-2xl mr-3"></i>
+                                <div>
+                                    <div class="text-xs">下载</div>
+                                    <div class="font-medium">App Store</div>
+                                </div>
+                            </a>
+                            <a href="#" class="flex items-center bg-dark hover:bg-dark/80 text-white px-6 py-3 rounded-lg transition-colors">
+                                <i class="fa fa-android text-2xl mr-3"></i>
+                                <div>
+                                    <div class="text-xs">下载</div>
+                                    <div class="font-medium">Google Play</div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="mt-8">
+                            <p class="text-gray-medium mb-3">或者扫描二维码下载</p>
+                            <div class="bg-white p-3 inline-block rounded-lg shadow-md">
+                                <img src="https://picsum.photos/id/1/120/120" alt="瑞幸咖啡APP下载二维码" class="w-32 h-32">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:w-1/2 flex justify-center">
+                        <img src="https://picsum.photos/id/2/600/800" alt="瑞幸咖啡APP展示" class="max-w-xs rounded-3xl shadow-2xl border-8 border-dark">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white pt-16 pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center mb-6">
+                        <img src="https://picsum.photos/id/431/60/60" alt="瑞幸咖啡Logo" class="h-10">
+                        <span class="ml-2 text-xl font-bold">瑞幸咖啡</span>
+                    </div>
+                    <p class="text-gray-400 mb-6">
+                        专业咖啡新鲜式，致力于为中国消费者提供高品质、高性价比的咖啡产品。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-weibo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-wechat"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-6">快速链接</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#products" class="text-gray-400 hover:text-primary transition-colors">菜单</a></li>
+                        <li><a href="#promotions" class="text-gray-400 hover:text-primary transition-colors">优惠活动</a></li>
+                        <li><a href="#brand" class="text-gray-400 hover:text-primary transition-colors">品牌故事</a></li>
+                        <li><a href="#stores" class="text-gray-400 hover:text-primary transition-colors">门店查询</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">企业合作</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-6">帮助中心</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">常见问题</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">订单查询</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">会员福利</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">隐私政策</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-primary transition-colors">用户协议</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-6">联系我们</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fa fa-map-marker text-primary mt-1 mr-3"></i>
+                            <span class="text-gray-400">北京市朝阳区望京SOHO T3-C座</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-phone text-primary mr-3"></i>
+                            <span class="text-gray-400">400-010-0101</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-envelope text-primary mr-3"></i>
+                            <span class="text-gray-400">contact@luckincoffee.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-clock-o text-primary mr-3"></i>
+                            <span class="text-gray-400">周一至周日 9:00-18:00</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 pt-8 text-center text-gray-500 text-sm">
+                <p>© 2023 瑞幸咖啡 Luckin Coffee. 保留所有权利。</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 w-12 h-12 rounded-full bg-primary text-white shadow-lg flex items-center justify-center opacity-0 invisible transition-all z-50">
+        <i class="fa fa-angle-up text-xl"></i>
+    </button>
+    
+    <!-- JavaScript -->
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 100) {
+                navbar.classList.add('nav-scrolled');
+                backToTop.classList.remove('opacity-0', 'invisible');
+                backToTop.classList.add('opacity-100', 'visible');
+            } else {
+                navbar.classList.remove('nav-scrolled');
+                backToTop.classList.add('opacity-0', 'invisible');
+                backToTop.classList.remove('opacity-100', 'visible');
+            }
+        });
+        
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        menuBtn.addEventListener('click', function() {
+            if (mobileMenu.classList.contains('opacity-0')) {
+                mobileMenu.classList.remove('-translate-y-full', 'opacity-0', 'pointer-events-none');
+                mobileMenu.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                menuBtn.innerHTML = '<i class="fa fa-times"></i>';
+            } else {
+                mobileMenu.classList.add('-translate-y-full', 'opacity-0', 'pointer-events-none');
+                mobileMenu.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+            }
+        });
+        
+        // 关闭移动菜单（点击菜单项后）
+        const mobileMenuItems = mobileMenu.querySelectorAll('a');
+        mobileMenuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                mobileMenu.classList.add('-translate-y-full', 'opacity-0', 'pointer-events-none');
+                mobileMenu.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+                menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+            });
+        });
+        
+        // 返回顶部功能
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 轮播图功能
+        const slides = document.querySelectorAll('.carousel-slide');
+        const indicators = document.querySelectorAll('.carousel-indicator');
+        const controls = document.querySelectorAll('.carousel-control');
+        let currentSlide = 0;
+        let slideInterval;
+        
+        // 初始化轮播
+        function startSlideInterval() {
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+        
+        // 显示指定幻灯片
+        function showSlide(index) {
+            // 隐藏所有幻灯片
+            slides.forEach(slide => {
+                slide.classList.remove('opacity-100');
+                slide.classList.add('opacity-0');
+            });
+            
+            // 重置所有指示器
+            indicators.forEach(indicator => {
+                indicator.classList.remove('active');
+            });
+            
+            // 显示当前幻灯片和激活当前指示器
+            slides[index].classList.remove('opacity-0');
+            slides[index].classList.add('opacity-100');
+            indicators[index].classList.add('active');
+            
+            currentSlide = index;
+        }
+        
+        // 下一张幻灯片
+        function nextSlide() {
+            let newIndex = (currentSlide + 1) % slides.length;
+            showSlide(newIndex);
+        }
+        
+        // 上一张幻灯片
+        function prevSlide() {
+            let newIndex = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(newIndex);
+        }
+        
+        // 点击指示器切换幻灯片
+        indicators.forEach(indicator => {
+            indicator.addEventListener('click', function() {
+                clearInterval(slideInterval);
+                showSlide(parseInt(this.dataset.index));
+                startSlideInterval();
+            });
+        });
+        
+        // 点击控制按钮切换幻灯片
+        controls[0].addEventListener('click', function() {
+            clearInterval(slideInterval);
+            prevSlide();
+            startSlideInterval();
+        });
+        
+        controls[1].addEventListener('click', function() {
+            clearInterval(slideInterval);
+            nextSlide();
+            startSlideInterval();
+        });
+        
+        // 初始化并启动轮播
+        startSlideInterval();
+        
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
